@@ -1,0 +1,20 @@
+1.update verified publisher windows installer appcelerator,currently shows aptana inc hovering installer image would 5 points already correct format
+2.titanium  studio  sdk  updating  readonly  sdk  folder  give  directory  error  updating  sdk  sdk  folder  readonly  access  directory  found  error  presented  instead  invalid  permission  step  reproduce  1  change  permission  titanium  sdk  folder  readonly  e  g  folder  right  click  property  permission  etc  2  update  sdk  different  version  update  option  1  go  http  build  appcelerator  com  s3  amazonaws  com  index  copy  sdk  location  go  studio  help  install  titanium  sdk  url  paste  link  update  update  option  2  remove  last  live  version  sdk  sdk  folder  go  studio  help  check  titanium  sdk  update  expected  result  error  indicating  sdk  folder  write  permission  actual  result  directory  found  error
+
+3.android  io  module  packagers  launch  configuration  type  tab  group  
+defined  opening  run  configuration  dialog  see  android  module  packager  
+io  module  packager  list  double  clicking  cause  error  showing  corresponding  tab  group  defined
+
+
+1.As a user of mule 350 i would like mule to depend on the latest version of mvel
+ to stay up to date with the latest mvel bug fixes enhancements the latest version seems to be 218-5 
+2.as a user i want my raml metadata to propagate xml schema information over datasense - 3 
+3.as a user I like to have an option of aws source module so that I can ingest data 
+from amazon s3 or use the simple email service reference spring integration aws extension - 5
+4.as a user id like to leverage _properties location_ parameter while using filter or 
+transform modules so that i can load the user defined properties included in the external
+ properties file attempting to include the _properties location_ attribute errors out refer
+ to the attachment it could also be beneficial to load user defined properties through stream 
+definition similar to deployment properties example script my script groovy variables 5
+5.as a user of the dq portal in previous version i will want to migrate 
+my dq portal to the new version in order to keep of of my customizations done in the previous version 13

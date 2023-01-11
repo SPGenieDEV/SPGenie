@@ -1,4 +1,4 @@
-from Model import Model
+from Classes.Model import Model
 import tensorflow as tf
 
 
