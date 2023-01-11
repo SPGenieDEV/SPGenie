@@ -40,7 +40,7 @@ class Model:
 
     @staticmethod
     def text_to_sequence(text, tokenizer):
-        seq = tokenizer.texts_to_sequences(text)
+        seq = tokenizer.texts_to_sequences([text])
         return seq
 
     @staticmethod
@@ -50,6 +50,7 @@ class Model:
 
     @staticmethod
     def predict_storyPoint(model, pad):
+        print(pad.shape)
         predict = model.predict(pad)
         return predict
 

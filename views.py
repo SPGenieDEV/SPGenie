@@ -15,20 +15,20 @@ def home():
 def form():
     userStory = request.form.get("userstory")
     print(userStory)
-    # userStory = userStory.lower()
-    # name = request.values['story'].lower()
-    # print(name.lower())
+
+
+    # prediction using the DEEP SE methlogy
     deep_se_model = Model('deep_se_model_with_10.h5', 'my_dict_deep_se.pickle', 'deep_se_model_with_10.json')
     model = deep_se_model.open_model()
     my_dict = deep_se_model.open_dict()
 
     tokenizer = Model.tokenize(my_dict)
     seq = Model.text_to_sequence(userStory.lower(), tokenizer)
-    # print(seq)
+    print(seq)
     pad = Model.text_pad_sequence(seq)
-    # print(pad)
+    print(pad)
     predict_sp = Model.predict_storyPoint(model, pad)
-    # print(predict_sp)
+    print(predict_sp)
     final_sp = Model.round_sp(predict_sp)
     print(len(final_sp))
 
