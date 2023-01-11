@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=nunito+sans:wght@2006display=swap");
+
+    :root {
+      --font-style: "nunito sans", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #131315;
+      font-family: var(--font-style);
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      width: 100%;
+      background-color: #fff;
+      height: 70px;
+      padding: 10px;
+    }
+
+    .logo {
+      color: #000;
+      font-size: 35px;
+      letter-spacing: 1px;
+      font-weight: 800;
+    }
+
+    .login-box {
+      margin: 30px auto;
+      width: 1000px;
+      padding: 40px;
+      background: #2a262c;
+      box-shadow: 0 10px 10px rgba(143, 124, 236, 0.7);
+      border-radius: 10px;
+    }
+
+    .login-box h1 {
+      margin: 0 0 30px;
+      padding: 0;
+      color: #fff;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    .login-box .user-box textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 20px;
+      color: #000;
+      margin: 10px 0;
+      outline: none;
+    }
+
+    .login-box .user-box input {
+      width: 100%;
+      padding: 10px;
+      font-size: 20px;
+      color: #000;
+      margin: 10px 0;
+      outline: none;
+    }
+    .login-box .user-box label {
+      left: 0;
+      margin-bottom: 10px;
+      font-size: 20px;
+      color: #fff;
+    }
+
+    .button-form {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .submitbtn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #8f7cec;
+      font-size: 15px;
+      text-decoration: none;
+      text-transform: uppercase;
+      overflow: hidden;
+      letter-spacing: 4px;
+      color: #fff;
+    }
+
+    .submitbtn:hover {
+      background: #8f7cec;
+      color: #fff;
+      border-radius: 5px;
+    }
+  </style>
+  <body>
+    <header>
+      <nav>
+        <div class="logo">SPGenny</div>
+      </nav>
+    </header>
+    <div class="login-box">
+      <h1>Story Point Estimation</h1>
+      <form action="/" method="POST">
+        <div class="user-box">
+          <label>User Story</label>
+          <textarea
+            name="userstory"
+            id=""
+            cols="30"
+            rows="5"
+            readonly
+            placeholder="As a <role> I want <goal> so that <benifit>"
+          ></textarea>
+        </div>
+
+        <div class="button-form">
+          <input type="submit" class="submitbtn"  name="submit" value="Prediction" readonly />
+        </div>
+      </form>
+      <div class="user-box">
+        <label>Story Point</label>
+        <input
+          name="storypoint"
+          id=""
+          placeholder="00"
+        >
+      </div>
+      <div class="user-box">
+        <label>Explain Reason</label>
+        <input
+          name="storypoint"
+          id=""
+          placeholder="********************"
+        >
+      </div>
+    </div>
+    <!-- <script type="text/javascript" src="main.js"></script> -->
+  </body>
+</html>
