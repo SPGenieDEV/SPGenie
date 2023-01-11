@@ -1,5 +1,3 @@
-import keras
-from keras.models import load_model
 from keras_preprocessing.text import Tokenizer
 from keras_preprocessing.sequence import pad_sequences
 import tensorflow as tf
