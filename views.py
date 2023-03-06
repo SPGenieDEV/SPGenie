@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, Flask, jsonify
 
 from Classes.Model import Model
 from Classes.RnnModel import RnnModel
 
 views = Blueprint(__name__, "views")
+app = Flask(__name__)
 
 
 @views.route("/")
@@ -52,3 +53,19 @@ def form():
     spValue = Model.max_occurrence(final_sp)
 
     return render_template("form.html", user_story=userStory, story_point=spValue[0])
+
+
+@views.route('/getStoryPoint', methods=['GET'])
+def get_users():
+    new_user = request.get_json()
+    print(new_user)
+    return jsonify({'users': [
+        {
+            'id': 1,
+            'name': 'John'
+        },
+        {
+            'id': 2,
+            'name': 'Jane'
+        }
+    ]})
