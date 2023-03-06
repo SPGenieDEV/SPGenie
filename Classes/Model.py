@@ -61,3 +61,6 @@ class Model:
     @staticmethod
     def max_occurrence(array):
         return max(array, key=array.count)
+
+
+
