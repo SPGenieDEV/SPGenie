@@ -1,5 +1,6 @@
 from Classes.Model import Model
 from Classes.RnnModel import RnnModel
+from Classes.GPT2SPModel import GPT2SPModel
 
 
 class ModelCall:
@@ -38,4 +39,14 @@ class ModelCall:
             final_sp = Model.round_sp(predict_sp)
             print(len(final_sp))
             print(Model.max_occurrence(final_sp))
+            return final_sp
+
+        elif choice == 3:
+            trained_model = GPT2SPModel.load_trained_model()
+            trained_model.eval()
+            user_story = user_story
+            label = [3]
+            test_dataloader = GPT2SPModel.prepare_once_line(user_story, label)
+            prediction = GPT2SPModel.do_inference_once(trained_model, test_dataloader)
+            final_sp = Model.round_sp(prediction[0])
             return final_sp
