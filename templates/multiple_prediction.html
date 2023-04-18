@@ -93,6 +93,47 @@
         font-weight: bold;
     }
 
+    /* CSS rules for the loading indicator */
+    .loading-indicator {
+        background-color: rgba(255, 255, 255, 0.8); /* semi-transparent white background */
+        border-radius: 4px; /* rounded corners */
+        color: #333; /* text color */
+        font-size: 16px; /* font size */
+        padding: 12px; /* padding around the text */
+        text-align: center; /* center the text */
+        width: 120px; /* width of the loading indicator */
+    }
+
+    /* CSS rules for the spinner */
+    .spinner {
+        border: 3px solid rgba(0, 0, 0, 0.2); /* gray border */
+        border-top-color: #333; /* top border color */
+        border-radius: 50%; /* rounded shape */
+        height: 24px; /* height of the spinner */
+        width: 24px; /* width of the spinner */
+        -webkit-animation: spin 1s linear infinite; /* CSS animation for the spinner */
+        animation: spin 1s linear infinite;
+    }
+
+    /* CSS animation for the spinner */
+    @-webkit-keyframes spin {
+        0% {
+            -webkit-transform: rotate(0deg);
+        }
+        100% {
+            -webkit-transform: rotate(360deg);
+        }
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
 </style>
 <body>
 <div class="title">
@@ -107,7 +148,10 @@
             <option value="3">GPTSP3</option>
         </select>
         <input type="file" name="file" id="file-input" onchange="handleFileSelect(event);">
-
+        <div id="loading-indicator"  class="loading-indicator" style="display:none;">
+            <div class="spinner"></div>
+            Loading...
+        </div>
     </form>
     <div id="csv-data"></div>
 </div>
@@ -150,7 +194,7 @@
                 let descriptionValue = descriptionCell.textContent;
 
                 let request = new XMLHttpRequest();
-                request.open('POST', 'http://127.0.0.1:5000/userStory?choice=3', true);
+                request.open('POST', 'http://127.0.0.1:5000/userStory?choice='+selection, true);
                 request.setRequestHeader('Content-Type', 'application/json');
                 request.onload = function () {
                     if (request.status >= 200 && request.status < 400) {
@@ -163,13 +207,18 @@
                     } else {
                         // We reached our target server, but it returned an error
                     }
+                    document.getElementById('loading-indicator').style.display = 'none';
+
                 };
                 request.onerror = function () {
+                    document.getElementById('loading-indicator').style.display = 'none';
+
                     // There was a connection error of some sort
                 };
                 let userStory = {
                     user_story: descriptionValue
                 };
+                document.getElementById('loading-indicator').style.display = 'block';
                 let data = JSON.stringify(userStory);
                 request.send(data);
 
