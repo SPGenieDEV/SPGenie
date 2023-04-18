@@ -1,3 +1,4 @@
+import pandas as pd
 from flask import Blueprint, render_template, request, Flask, jsonify
 from Classes.Model import Model
 from Classes.ModelCall import ModelCall
@@ -11,6 +12,20 @@ CORS(views)
 @views.route("/")
 def home():
     return render_template("index.html")
+
+
+@views.route('/multiple_prediction', methods=['GET', "POST"])
+def multiple_prediction():
+    if request.method == 'POST':
+        file = request.files['file']
+        df = pd.read_csv(file, usecols=['issuekey', "description"])
+        df['storypoint'] = ''
+        # csv_data = df.to_csv(index=False)
+        # return csv_data
+        data_str = df.to_html()
+        return data_str
+    else:
+        return render_template('multiple_prediction.html')
 
 
 @views.route("/from", methods=["POST"])
@@ -44,4 +59,3 @@ def get_users():
     elif choice == '3':
         sp_value = final_sp[0]
         return jsonify({'story_point': str(sp_value[0])})
-
