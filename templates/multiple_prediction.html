@@ -101,7 +101,7 @@
 <div>
     <form id="upload-form" action="/multiple_prediction" method="POST" enctype="multipart/form-data">
         <label for="select">Select an option:</label>
-        <select id="select" name="select">
+        <select onchange="changeSelection(event)" id="select" name="select">
             <option value="1">Deep SE method</option>
             <option value="2">GNN RNN method</option>
             <option value="3">GPTSP3</option>
@@ -113,6 +113,12 @@
 </div>
 </body>
 <script>
+    let selection = 0;
+
+    function changeSelection(event) {
+        selection = event.target.value
+    }
+
     function displayCsvData(data) {
         let csvDataDiv = document.getElementById('csv-data');
         {#let csvTable = document.createElement('table');#}
@@ -135,15 +141,40 @@
             button.textContent = 'Predict';
             buttonCell.appendChild(button);
             csvTable.rows[i].appendChild(buttonCell);
-            
-            button.addEventListener('click', function() {
-            let row = this.parentNode.parentNode;
-            let storypointCell = row.querySelector('td:nth-child(4)');
-            storypointCell.textContent = '1';
-            let descriptionCell = row.querySelector('td:nth-child(3)');
-            let descriptionValue = descriptionCell.textContent;
-            console.log(descriptionValue);
-        });
+
+            button.addEventListener('click', function () {
+                let row = this.parentNode.parentNode;
+                let storypointCell = row.querySelector('td:nth-child(4)');
+
+                let descriptionCell = row.querySelector('td:nth-child(3)');
+                let descriptionValue = descriptionCell.textContent;
+
+                let request = new XMLHttpRequest();
+                request.open('POST', 'http://127.0.0.1:5000/userStory?choice=3', true);
+                request.setRequestHeader('Content-Type', 'application/json');
+                request.onload = function () {
+                    if (request.status >= 200 && request.status < 400) {
+                        // Success!
+                        let data = request.responseText;
+                        let val = JSON.parse(data);
+                        let storyPoint = val.story_point;
+                        storypointCell.textContent = storyPoint;
+                        console.log(storyPoint);
+                    } else {
+                        // We reached our target server, but it returned an error
+                    }
+                };
+                request.onerror = function () {
+                    // There was a connection error of some sort
+                };
+                let userStory = {
+                    user_story: descriptionValue
+                };
+                let data = JSON.stringify(userStory);
+                request.send(data);
+
+
+            });
         }
         console.log(csvTable)
         // Append the table to the 'csv-data' div element
@@ -152,44 +183,44 @@
         let csvButton = document.createElement('button');
         csvButton.textContent = 'Download CSV';
         csvDataDiv.appendChild(csvButton);
-        csvButton.addEventListener('click', function() {
-        // Convert the HTML table to a CSV string
-        let csvData = csvTableToCsv(csvTable);
+        csvButton.addEventListener('click', function () {
+            // Convert the HTML table to a CSV string
+            let csvData = csvTableToCsv(csvTable);
 
-        // Create a new blob object with the CSV data
-        let blob = new Blob([csvData], {type: 'text/csv;charset=utf-8;'});
+            // Create a new blob object with the CSV data
+            let blob = new Blob([csvData], {type: 'text/csv;charset=utf-8;'});
 
-        // Create a new URL for the blob object
-        let url = URL.createObjectURL(blob);
+            // Create a new URL for the blob object
+            let url = URL.createObjectURL(blob);
 
-        // Create a new anchor element with the URL as the href attribute
-        let downloadLink = document.createElement('a');
-        downloadLink.href = url;
-        downloadLink.download = 'data.csv';
+            // Create a new anchor element with the URL as the href attribute
+            let downloadLink = document.createElement('a');
+            downloadLink.href = url;
+            downloadLink.download = 'data.csv';
 
-        // Append the anchor element to the document body and click it to start the download
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-    });
+            // Append the anchor element to the document body and click it to start the download
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        });
 
 
         {#csvDataDiv.appendChild(csvTable);#}
     }
 
     function csvTableToCsv(table) {
-    let csvRows = [];
+        let csvRows = [];
 
-    for (let i = 0; i < table.rows.length; i++) {
-        let csvCells = [];
-        for (let j = 0; j < table.rows[i].cells.length; j++) {
-            csvCells.push(table.rows[i].cells[j].textContent);
+        for (let i = 0; i < table.rows.length; i++) {
+            let csvCells = [];
+            for (let j = 0; j < table.rows[i].cells.length; j++) {
+                csvCells.push(table.rows[i].cells[j].textContent);
+            }
+            csvRows.push(csvCells.join(','));
         }
-        csvRows.push(csvCells.join(','));
-    }
 
-    return csvRows.join('\n');
-}
+        return csvRows.join('\n');
+    }
 
     function handleFileSelect(event) {
         let file = event.target.files[0];
