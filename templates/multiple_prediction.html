@@ -149,10 +149,47 @@
         // Append the table to the 'csv-data' div element
         csvDataDiv.appendChild(csvTable);
 
+        let csvButton = document.createElement('button');
+        csvButton.textContent = 'Download CSV';
+        csvDataDiv.appendChild(csvButton);
+        csvButton.addEventListener('click', function() {
+        // Convert the HTML table to a CSV string
+        let csvData = csvTableToCsv(csvTable);
+
+        // Create a new blob object with the CSV data
+        let blob = new Blob([csvData], {type: 'text/csv;charset=utf-8;'});
+
+        // Create a new URL for the blob object
+        let url = URL.createObjectURL(blob);
+
+        // Create a new anchor element with the URL as the href attribute
+        let downloadLink = document.createElement('a');
+        downloadLink.href = url;
+        downloadLink.download = 'data.csv';
+
+        // Append the anchor element to the document body and click it to start the download
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+    });
 
 
         {#csvDataDiv.appendChild(csvTable);#}
     }
+
+    function csvTableToCsv(table) {
+    let csvRows = [];
+
+    for (let i = 0; i < table.rows.length; i++) {
+        let csvCells = [];
+        for (let j = 0; j < table.rows[i].cells.length; j++) {
+            csvCells.push(table.rows[i].cells[j].textContent);
+        }
+        csvRows.push(csvCells.join(','));
+    }
+
+    return csvRows.join('\n');
+}
 
     function handleFileSelect(event) {
         let file = event.target.files[0];
