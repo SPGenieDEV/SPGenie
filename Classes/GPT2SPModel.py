@@ -56,7 +56,7 @@ class GPT2SPModel:
     @staticmethod
     def do_inference_once(trained_model, test_dataloader):
         global TEXT, KEY
-        global XAI
+        XAI = True
         tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
         tokenizer.pad_token = '[PAD]'
         TOK = tokenizer
@@ -75,25 +75,25 @@ class GPT2SPModel:
         total_distance = 0
         index = 0
         print(predictions)
-        for i in range(len(predictions)):
-            for j in range(len(predictions[i])):
-                # for each correctly predicted issue
-                if round(predictions[i][j][0], 0) == true_labels[i][j] and XAI is True:
-                    # store every attr scores
-                    word_score_map = {}
-                    attr_scores = []
-                    top_words = []
-                    print("prediction: ", predictions[i][j])
-                    print("true label: ", true_labels[i][j])
-                    global TEXT, KEY
-                    print("Issue Key: ", KEY.iloc[index])
-                    attrs = cls_explainer(TEXT.iloc[index], ground_truth=true_labels[i][j])
-                    print("Attribute Values: ", attrs)
-                    cls_explainer.visualize()
-                distance = abs(predictions[i][j] - true_labels[i][j])
-                total_distance += distance
-                index += 1
-        total_data_point = len(predictions) * len(predictions[0])
-        MAE = total_distance / total_data_point
-        print('MAE: ', MAE)
+        # for i in range(len(predictions)):
+        #     for j in range(len(predictions[i])):
+        #         # for each correctly predicted issue
+        #         if round(predictions[i][j][0], 0) == true_labels[i][j] and XAI is True:
+        #             # store every attr scores
+        #             word_score_map = {}
+        #             attr_scores = []
+        #             top_words = []
+        #             print("prediction: ", predictions[i][j])
+        #             print("true label: ", true_labels[i][j])
+        #             global TEXT, KEY
+        #             print("Issue Key: ", KEY.iloc[index])
+        #             attrs = cls_explainer(TEXT.iloc[index], ground_truth=true_labels[i][j])
+        #             print("Attribute Values: ", attrs)
+        #             cls_explainer.visualize()
+        #         distance = abs(predictions[i][j] - true_labels[i][j])
+        #         total_distance += distance
+        #         index += 1
+        # total_data_point = len(predictions) * len(predictions[0])
+        # MAE = total_distance / total_data_point
+        # print('MAE: ', MAE)
         return predictions

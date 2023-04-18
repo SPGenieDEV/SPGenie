@@ -5,6 +5,24 @@
     <title>Multiple Prediction</title>
 </head>
 <style>
+    button {
+        background-color: #4CAF50; /* green background */
+        border: none; /* no border */
+        color: white; /* white text */
+        padding: 12px 24px; /* padding around the text */
+        text-align: center; /* center the text horizontally */
+        text-decoration: none; /* no underline */
+        display: inline-block; /* display as inline block */
+        font-size: 16px; /* font size */
+        border-radius: 4px; /* rounded corners */
+        cursor: pointer; /* change the cursor to a pointer on hover */
+        transition: background-color 0.3s ease; /* transition for the background color */
+    }
+
+    button:hover {
+        background-color: #3e8e41; /* darker green background on hover */
+    }
+
     /* Style for the label */
     label {
         display: block;
@@ -86,6 +104,11 @@
         max-width: 200px; /* set maximum width for columns */
         word-wrap: break-word; /* wrap text within columns */
         overflow: auto;
+        text-align: center;
+    }
+
+    td:nth-child(3) {
+        text-align: left;
     }
 
     th {
@@ -134,6 +157,87 @@
         }
     }
 
+    input[type="file"] {
+        background-color: #e89b71; /* green background */
+        border: none; /* no border */
+        color: white; /* white text */
+        padding: 12px 24px; /* padding around the text */
+        text-align: center; /* center the text horizontally */
+        text-decoration: none; /* no underline */
+        display: inline-block; /* display as inline block */
+        font-size: 16px; /* font size */
+        border-radius: 4px; /* rounded corners */
+        cursor: pointer; /* change the cursor to a pointer on hover */
+        transition: background-color 0.3s ease; /* transition for the background color */
+    }
+
+    input[type="file"]:hover {
+        background-color: #8e7a3e; /* darker green background on hover */
+    }
+
+
+    .popup {
+        background-color: #fff; /* white background */
+        border-radius: 4px; /* rounded corners */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* drop shadow */
+        display: none; /* hide the popup by default */
+        left: 50%; /* center horizontally */
+        position: fixed; /* fixed position */
+        top: 50%; /* center vertically */
+        transform: translate(-50%, -50%); /* center the popup */
+        z-index: 999; /* ensure the popup appears on top */
+    }
+
+    /* CSS rules for the popup content */
+    .popup-content {
+        display: flex; /* use flexbox layout */
+        align-items: center; /* center the content vertically */
+        justify-content: center; /* center the content horizontally */
+        padding: 24px; /* padding around the content */
+    }
+
+    /* CSS rules for the backdrop */
+    .backdrop {
+        background-color: rgba(0, 0, 0, 0.5); /* semi-transparent black background */
+        display: none; /* hide the backdrop by default */
+        height: 100%; /* cover the entire height of the page */
+        left: 0; /* align to the left of the page */
+        position: fixed; /* fixed position */
+        top: 0; /* align to the top of the page */
+        width: 100%; /* cover the entire width of the page */
+        z-index: 998; /* ensure the backdrop appears behind the popup */
+    }
+
+    /* CSS rules for the spinner */
+    .spinner {
+        border: 3px solid rgba(0, 0, 0, 0.2); /* gray border */
+        border-top-color: #333; /* top border color */
+        border-radius: 50%; /* rounded shape */
+        height: 24px; /* height of the spinner */
+        width: 24px; /* width of the spinner */
+        -webkit-animation: spin 1s linear infinite; /* CSS animation for the spinner */
+        animation: spin 1s linear infinite;
+    }
+
+    /* CSS animation for the spinner */
+    @-webkit-keyframes spin {
+        0% {
+            -webkit-transform: rotate(0deg);
+        }
+        100% {
+            -webkit-transform: rotate(360deg);
+        }
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
 </style>
 <body>
 <div class="title">
@@ -148,16 +252,25 @@
             <option value="3">GPTSP3</option>
         </select>
         <input type="file" name="file" id="file-input" onchange="handleFileSelect(event);">
-        <div id="loading-indicator"  class="loading-indicator" style="display:none;">
+        <div id="loading-indicator" class="loading-indicator" style="display:none;">
             <div class="spinner"></div>
             Loading...
         </div>
     </form>
+
+    <div id="popup" class="popup" style="display: none">
+        <div class="popup-content">
+            <div class="spinner"></div>
+            <div class="message">Loading...</div>
+        </div>
+    </div>
+
+    <div id="backdrop" class="backdrop"></div>
     <div id="csv-data"></div>
 </div>
 </body>
 <script>
-    let selection = 0;
+    let selection = 1;
 
     function changeSelection(event) {
         selection = event.target.value
@@ -187,6 +300,13 @@
             csvTable.rows[i].appendChild(buttonCell);
 
             button.addEventListener('click', function () {
+
+                let myButton = document.getElementById('my-button');
+                let popup = document.getElementById('popup');
+                let backdrop = document.getElementById('backdrop');
+                popup.style.display = 'block';
+                backdrop.style.display = 'block';
+
                 let row = this.parentNode.parentNode;
                 let storypointCell = row.querySelector('td:nth-child(4)');
 
@@ -194,7 +314,7 @@
                 let descriptionValue = descriptionCell.textContent;
 
                 let request = new XMLHttpRequest();
-                request.open('POST', 'http://127.0.0.1:5000/userStory?choice='+selection, true);
+                request.open('POST', 'http://127.0.0.1:5000/userStory?choice=' + selection, true);
                 request.setRequestHeader('Content-Type', 'application/json');
                 request.onload = function () {
                     if (request.status >= 200 && request.status < 400) {
@@ -208,11 +328,13 @@
                         // We reached our target server, but it returned an error
                     }
                     document.getElementById('loading-indicator').style.display = 'none';
-
+                    popup.style.display = 'none';
+                    backdrop.style.display = 'none';
                 };
                 request.onerror = function () {
                     document.getElementById('loading-indicator').style.display = 'none';
-
+                    popup.style.display = 'none';
+                    backdrop.style.display = 'none';
                     // There was a connection error of some sort
                 };
                 let userStory = {
