@@ -10,7 +10,7 @@
 <div class="title">
     <h2>Explainer Prediction</h2>
 </div>
-<form id="upload-form" action="/" method="POST" enctype="multipart/form-data">
+<form id="upload-form" action="/explain_prediction" method="POST" enctype="multipart/form-data">
     <label for="select">Select the prediction type:</label>
     <select onchange="changeSelection(event)" id="select" name="select">
         <option value="1">Deep SE method</option>
@@ -20,19 +20,88 @@
     <div class="textArea">
         <label for="message">Message:</label>
         <br>
-        <textarea id="message" name="message"></textarea>
+        <textarea id="message-id" name="message"></textarea>
     </div>
     <br>
-    <button type="button" onclick="addTextArea()">Submit</button>
+    <button type="button" onclick="predictTheInputValue()">Submit</button>
 </form>
 <div id="text-area-container" class="textArea"></div>
+<div id="popup" class="popup" style="display: none">
+    <div class="popup-content">
+        <div class="spinner"></div>
+        <div class="message">Loading...</div>
+    </div>
+</div>
+
+<div id="backdrop" class="backdrop"></div>
 </body>
 </html>
 
 <script>
-    function addTextArea() {
-        let container = document.getElementById("text-area-container");
-        let textArea = document.createElement("textarea");
-        container.appendChild(textArea);
+    let selectionModel = 1;
+    let userStory = "";
+    let explainButton = document.createElement('button')
+    let textAreaAdd
+
+    let textArea = document.getElementById('message-id');
+    textArea.addEventListener('input', function () {
+        userStory = textArea.valueOf().value;
+        console.log(userStory)
+    })
+
+    function changeSelection(event) {
+
+        selectionModel = event.target.value
+        console.log(selectionModel)
     }
+
+    function predictTheInputValue() {
+
+        let container = document.getElementById("text-area-container");
+        textAreaAdd = document.createElement("textarea");
+        let popup = document.getElementById('popup');
+        let backdrop = document.getElementById('backdrop');
+        popup.style.display = 'block';
+        backdrop.style.display = 'block';
+        explainButton.innerText = 'Explain my solution'
+        explainButton.className = 'explainButton'
+        let formData = new FormData();
+        formData.append('userStory', userStory);
+        formData.append('choice', selectionModel);
+        console.log(formData)
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', '/explain_prediction');
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                console.log(xhr.response)
+                let res = JSON.parse(xhr.response)
+                console.log(res)
+                textAreaAdd.innerText = res.story_point
+                container.append(textAreaAdd, explainButton);
+                {#document.getElementById('loading-indicator').style.display = 'none';#}
+                popup.style.display = 'none';
+                backdrop.style.display = 'none';
+                {#displayCsvData(xhr.responseText);#}
+                /**
+                 * TODO: when u want to clear after 3 seconds
+                 * to remove back button
+                 * setTimeout(()=>{
+                    container.removeChild(textArea)
+                    container.removeChild(explainButton)
+                },3000)**/
+            } else {
+                alert('Error uploading file');
+            }
+            {#document.getElementById('loading-indicator').style.display = 'none';#}
+            popup.style.display = 'none';
+            backdrop.style.display = 'none';
+        };
+        xhr.send(formData);
+    }
+
+    explainButton.addEventListener("click", function () {
+        console.log(textAreaAdd.valueOf().value)
+        alert("Button clicked!");
+    });
+
 </script>

@@ -56,3 +56,72 @@ textarea {
     border-radius: 5px;
     box-shadow: 2px 2px 5px #ccc;
 }
+
+.explainButton{
+    margin-top: 5px;
+    background: #8e7a3e;
+}
+
+.popup {
+    background-color: #fff; /* white background */
+    border-radius: 4px; /* rounded corners */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* drop shadow */
+    display: none; /* hide the popup by default */
+    left: 50%; /* center horizontally */
+    position: fixed; /* fixed position */
+    top: 50%; /* center vertically */
+    transform: translate(-50%, -50%); /* center the popup */
+    z-index: 999; /* ensure the popup appears on top */
+}
+
+/* CSS rules for the popup content */
+.popup-content {
+    display: flex; /* use flexbox layout */
+    align-items: center; /* center the content vertically */
+    justify-content: center; /* center the content horizontally */
+    padding: 24px; /* padding around the content */
+}
+
+/* CSS rules for the backdrop */
+.backdrop {
+    background-color: rgba(0, 0, 0, 0.5); /* semi-transparent black background */
+    display: none; /* hide the backdrop by default */
+    height: 100%; /* cover the entire height of the page */
+    left: 0; /* align to the left of the page */
+    position: fixed; /* fixed position */
+    top: 0; /* align to the top of the page */
+    width: 100%; /* cover the entire width of the page */
+    z-index: 998; /* ensure the backdrop appears behind the popup */
+}
+
+/* CSS rules for the spinner */
+.spinner {
+    border: 3px solid rgba(0, 0, 0, 0.2); /* gray border */
+    border-top-color: #333; /* top border color */
+    border-radius: 50%; /* rounded shape */
+    height: 24px; /* height of the spinner */
+    width: 24px; /* width of the spinner */
+    -webkit-animation: spin 1s linear infinite; /* CSS animation for the spinner */
+    animation: spin 1s linear infinite;
+}
+
+/* CSS animation for the spinner */
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+

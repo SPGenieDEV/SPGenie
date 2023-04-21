@@ -27,9 +27,19 @@ def multiple_prediction():
     else:
         return render_template('multiple_prediction.html')
 
-@views.route('/explain_prediction',methods=['GET','POST'])
+
+@views.route('/explain_prediction', methods=['GET', 'POST'])
 def explain_prediction():
-    return render_template('explainPrediction.html')
+    if request.method == 'POST':
+        user_story = request.form['userStory']
+        choice = request.form['choice']
+        final_sp = ModelCall.call_to_model(int(choice), str(user_story))
+        print(final_sp)
+        sp_value = final_sp[0]
+        return jsonify({'story_point': str(sp_value[0])})
+    else:
+        return render_template('explainPrediction.html')
+
 
 @views.route("/from", methods=["POST"])
 def form():
