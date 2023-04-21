@@ -83,3 +83,14 @@ def get_explainer():
     response_data = ModelCall.call_to_explain(user_story)
     # response = Response(response_data, mimetype='image/png')
     return response_data
+
+
+@views.route('/explainTest', methods=['POST'])
+def get_explainer_test():
+    data = request.get_json()
+    user_story = data['userStory']
+    print(user_story)
+    # predicted_value = data['predictedValue']
+    response_data = ModelCall.call_to_explain_test(user_story)
+    # response = Response(response_data, mimetype='image/png')
+    return response_data

@@ -79,4 +79,14 @@ class ModelCall:
         response = Response(fig_bytes.getvalue(), mimetype='image/png')
         return response
 
+    @staticmethod
+    def call_to_explain_test(user_story):
+        explainer_instance = Explainer('./models/Explainer_model/explain.pkl')
+        explainer_model = explainer_instance.open_model_explainer()
+        explainer = Explainer.explainer()
+        exp = Explainer.explain_instance(explainer, user_story, explainer_model, 5)
+        list_of_words = Explainer.get_all_the_list_of_words(exp)
+        html = exp.show_in_notebook(text=True)
+        return Response(str(html), mimetype='text/plain')
+
 
