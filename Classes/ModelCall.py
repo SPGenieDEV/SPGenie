@@ -1,6 +1,13 @@
+from io import BytesIO
+
+from flask import Response
+from matplotlib import pyplot as plt
+
+from Classes.Explainer import Explainer
+from Classes.GPT2SPModel import GPT2SPModel
 from Classes.Model import Model
 from Classes.RnnModel import RnnModel
-from Classes.GPT2SPModel import GPT2SPModel
+from IPython.core.display import HTML
 
 
 class ModelCall:
@@ -50,3 +57,36 @@ class ModelCall:
             prediction = GPT2SPModel.do_inference_once(trained_model, test_dataloader)
             final_sp = Model.round_sp(prediction[0])
             return final_sp
+
+    @staticmethod
+    def call_to_explain(user_story):
+        explainer_instance = Explainer('./models/Explainer_model/explain.pkl')
+        explainer_model = explainer_instance.open_model_explainer()
+        explainer = Explainer.explainer()
+        exp = Explainer.explain_instance(explainer, user_story, explainer_model, 5)
+        list_of_words = Explainer.get_all_the_list_of_words(exp)
+        image_response = Explainer.get_plot(exp)
+        """
+        combined_data = 'hello'.encode() + b'\n' + image_response.get_data()
+        final_response = Response(response=combined_data, status=200, mimetype='multipart/related')
+        final_response.headers["Content-Disposition"] = "attachment; filename=response.txt"
+        """
+        # print(Explainer.get_all_the_list_of_words(exp))
+        fig_bytes = BytesIO()
+        plt.savefig(fig_bytes, format='png')
+
+        # Create a response object with the image data
+        response = Response(fig_bytes.getvalue(), mimetype='image/png')
+        return response
+
+    @staticmethod
+    def call_to_explain_test(user_story):
+        explainer_instance = Explainer('./models/Explainer_model/explain.pkl')
+        explainer_model = explainer_instance.open_model_explainer()
+        explainer = Explainer.explainer()
+        exp = Explainer.explain_instance(explainer, user_story, explainer_model, 5)
+        list_of_words = Explainer.get_all_the_list_of_words(exp)
+        html = exp.show_in_notebook(text=True)
+        return Response(str(html), mimetype='text/plain')
+
+
