@@ -27,6 +27,9 @@ def multiple_prediction():
     else:
         return render_template('multiple_prediction.html')
 
+@views.route('/explain_prediction',methods=['GET','POST'])
+def explain_prediction():
+    return render_template('explainPrediction.html')
 
 @views.route("/from", methods=["POST"])
 def form():

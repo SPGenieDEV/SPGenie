@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Explain Predictions</title>
+    <link rel="stylesheet" href="../static/css/explainer_prediction.css">
+</head>
+<body>
+
+<div class="title">
+    <h2>Explainer Prediction</h2>
+</div>
+<form id="upload-form" action="/" method="POST" enctype="multipart/form-data">
+    <label for="select">Select the prediction type:</label>
+    <select onchange="changeSelection(event)" id="select" name="select">
+        <option value="1">Deep SE method</option>
+        <option value="2">GNN RNN method</option>
+        <option value="3">GPTSP3</option>
+    </select>
+    <div class="textArea">
+        <label for="message">Message:</label>
+        <br>
+        <textarea id="message" name="message"></textarea>
+    </div>
+    <br>
+    <button type="button" onclick="addTextArea()">Submit</button>
+</form>
+<div id="text-area-container" class="textArea"></div>
+</body>
+</html>
+
+<script>
+    function addTextArea() {
+        let container = document.getElementById("text-area-container");
+        let textArea = document.createElement("textarea");
+        container.appendChild(textArea);
+    }
+</script>
