@@ -1,5 +1,5 @@
 import pandas as pd
-from flask import Blueprint, render_template, request, Flask, jsonify
+from flask import Blueprint, render_template, request, Flask, jsonify, Response
 from Classes.Model import Model
 from Classes.ModelCall import ModelCall
 from flask_cors import CORS
@@ -72,3 +72,14 @@ def get_users():
     elif choice == '3':
         sp_value = final_sp[0]
         return jsonify({'story_point': str(sp_value[0])})
+
+
+@views.route('/explain', methods=['POST'])
+def get_explainer():
+    data = request.get_json()
+    user_story = data['userStory']
+    print(user_story)
+    # predicted_value = data['predictedValue']
+    response_data = ModelCall.call_to_explain(user_story)
+    # response = Response(response_data, mimetype='image/png')
+    return response_data

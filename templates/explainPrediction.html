@@ -34,14 +34,18 @@
 </div>
 
 <div id="backdrop" class="backdrop"></div>
+<img id="my-image" src="">
 </body>
 </html>
 
 <script>
+    let container = document.getElementById("text-area-container");
     let selectionModel = 1;
     let userStory = "";
     let explainButton = document.createElement('button')
     let textAreaAdd
+    let popup = document.getElementById('popup');
+    let backdrop = document.getElementById('backdrop');
 
     let textArea = document.getElementById('message-id');
     textArea.addEventListener('input', function () {
@@ -57,10 +61,9 @@
 
     function predictTheInputValue() {
 
-        let container = document.getElementById("text-area-container");
+
         textAreaAdd = document.createElement("textarea");
-        let popup = document.getElementById('popup');
-        let backdrop = document.getElementById('backdrop');
+
         popup.style.display = 'block';
         backdrop.style.display = 'block';
         explainButton.innerText = 'Explain my solution'
@@ -68,14 +71,11 @@
         let formData = new FormData();
         formData.append('userStory', userStory);
         formData.append('choice', selectionModel);
-        console.log(formData)
         let xhr = new XMLHttpRequest();
         xhr.open('POST', '/explain_prediction');
         xhr.onload = function () {
             if (xhr.status === 200) {
-                console.log(xhr.response)
                 let res = JSON.parse(xhr.response)
-                console.log(res)
                 textAreaAdd.innerText = res.story_point
                 container.append(textAreaAdd, explainButton);
                 {#document.getElementById('loading-indicator').style.display = 'none';#}
@@ -100,8 +100,44 @@
     }
 
     explainButton.addEventListener("click", function () {
-        console.log(textAreaAdd.valueOf().value)
-        alert("Button clicked!");
+        /**
+         * TODO
+         * if there request time will increase
+         * we have to increase time out
+         const controller = new AbortController();
+         setTimeout(() => {
+                controller.abort();
+            }, timeout);
+         fetch('http://example.com/my-api-endpoint', {
+                method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ storypoint }),
+              signal
+            })
+         use that type to increase
+         **/
+        popup.style.display = 'block';
+        backdrop.style.display = 'block';
+        const img = document.getElementById('my-image');
+        const userStory = textArea.valueOf().value
+        fetch('http://127.0.0.1:5000/explain', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({userStory})
+        }).then(response => response.blob())
+            .then(blob => {
+                img.src = URL.createObjectURL(blob);
+            })
+            .catch(error => {
+                console.error(error);
+            }).finally(() => {
+            popup.style.display = 'none';
+            backdrop.style.display = 'none';
+        })
     });
 
 </script>
