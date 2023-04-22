@@ -1,6 +1,7 @@
+import io
 from io import BytesIO
 
-from flask import Response
+from flask import Response, make_response
 from matplotlib import pyplot as plt
 
 from Classes.Explainer import Explainer
@@ -86,7 +87,23 @@ class ModelCall:
         explainer = Explainer.explainer()
         exp = Explainer.explain_instance(explainer, user_story, explainer_model, 5)
         list_of_words = Explainer.get_all_the_list_of_words(exp)
-        html = exp.show_in_notebook(text=True)
-        return Response(str(html), mimetype='text/plain')
+        # html = exp.show_in_notebook()
 
+        display_obj = HTML(exp.as_html())
 
+        # print(type(exp.show_in_notebook(text=True)))
+        # buf = io.BytesIO(html)
+        # plt.savefig(buf, format='png')
+        # buf.seek(0)
+
+        html_string = display_obj.data
+        # Render the HTML template with the notebook results
+        return html_string
+        # html_content = exp.as_html()*****
+        # create a Flask response with the HTML content
+        # response = make_response(html_content) ****
+
+        # response.headers['Content-Type'] = 'text/html' **
+        # **** response.headers['Content-Disposition'] = 'attachment; filename=explanation.html'
+        # return response ****
+        # return html
