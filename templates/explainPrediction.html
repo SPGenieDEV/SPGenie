@@ -10,7 +10,7 @@
 <div class="title">
     <h2>Explainer Prediction</h2>
 </div>
-<form id="upload-form" action="/explain_prediction" method="POST" enctype="multipart/form-data">
+<form id="upload-form" action="/explainTestWeb" method="POST" enctype="multipart/form-data">
     <label for="select">Select the prediction type:</label>
     <select onchange="changeSelection(event)" id="select" name="select">
         <option value="1">Deep SE method</option>
@@ -24,8 +24,12 @@
     </div>
     <br>
     <button type="button" onclick="predictTheInputValue()">Submit</button>
+
+    <div id="text-area-container" class="textArea" style="display: none">
+        <button type="submit" onsubmit="clickedToIframe()">Predict</button>
+    </div>
 </form>
-<div id="text-area-container" class="textArea"></div>
+
 <div id="popup" class="popup" style="display: none">
     <div class="popup-content">
         <div class="spinner"></div>
@@ -35,6 +39,10 @@
 
 <div id="backdrop" class="backdrop"></div>
 <img id="my-image" src="">
+<div id="target-element-id" style="width:50%; height: auto ">
+    hello
+</div>
+
 </body>
 </html>
 
@@ -63,11 +71,10 @@
 
 
         textAreaAdd = document.createElement("textarea");
-
         popup.style.display = 'block';
         backdrop.style.display = 'block';
-        explainButton.innerText = 'Explain my solution'
-        explainButton.className = 'explainButton'
+
+
         let formData = new FormData();
         formData.append('userStory', userStory);
         formData.append('choice', selectionModel);
@@ -75,6 +82,7 @@
         xhr.open('POST', '/explain_prediction');
         xhr.onload = function () {
             if (xhr.status === 200) {
+                container.style.display = 'block'
                 let res = JSON.parse(xhr.response)
                 textAreaAdd.innerText = res.story_point
                 container.append(textAreaAdd, explainButton);
@@ -99,7 +107,54 @@
         xhr.send(formData);
     }
 
-    explainButton.addEventListener("click", function () {
+    {#explainButton.onsubmit(clickedToIframe)#}
+    {#explainButton.addEventListener("submit", clickedToIframe)#}
+
+    function clickedToIframe() {
+        let form = document.querySelector('form');
+        let formData = new FormData(form);
+        /**
+         * TODO
+         * if there request time will increase
+         * we have to increase time out
+         const controller = new AbortController();
+         setTimeout(() => {
+                controller.abort();
+            }, timeout);
+         fetch('http://example.com/my-api-endpoint', {
+                method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ storypoint }),
+              signal
+            })
+         use that type to increase
+         **/
+        popup.style.display = 'block';
+        backdrop.style.display = 'block';
+        const img = document.getElementById('my-image');
+        const userStory = textArea.valueOf().value
+
+        fetch('http://127.0.0.1:5000/explainTestWeb', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({userStory})
+        })
+            .then(result => {
+                {#window.location.href = 'http://127.0.0.1:5000/explainTestWeb';#}
+            })
+            .catch(error => {
+                console.error(error);
+            }).finally(() => {
+            popup.style.display = 'none';
+            backdrop.style.display = 'none';
+        })
+    }
+
+    function clickedToImage() {
         /**
          * TODO
          * if there request time will increase
@@ -138,6 +193,6 @@
             popup.style.display = 'none';
             backdrop.style.display = 'none';
         })
-    });
+    }
 
 </script>

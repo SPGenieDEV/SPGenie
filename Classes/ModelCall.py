@@ -1,10 +1,13 @@
+import io
 from io import BytesIO
 
-from flask import Response
+import torch
+from flask import Response, make_response
 from matplotlib import pyplot as plt
 
 from Classes.Explainer import Explainer
 from Classes.GPT2SPModel import GPT2SPModel
+from Classes.GPT2SPMediumModel import GPT2SPMediumModel
 from Classes.Model import Model
 from Classes.RnnModel import RnnModel
 from IPython.core.display import HTML
@@ -48,15 +51,31 @@ class ModelCall:
             print(Model.max_occurrence(final_sp))
             return final_sp
 
-        elif choice == 3:
-            trained_model = GPT2SPModel.load_trained_model()
-            trained_model.eval()
-            user_story = user_story
-            label = [3]
-            test_dataloader = GPT2SPModel.prepare_once_line(user_story, label)
-            prediction = GPT2SPModel.do_inference_once(trained_model, test_dataloader)
-            final_sp = Model.round_sp(prediction[0])
-            return final_sp
+        elif choice == 3 or choice == 4:
+            if choice == 3:
+                path = "models/GPT2SP_model"
+                trained_model = GPT2SPModel.load_trained_model(path)
+                trained_model.eval()
+                user_story = user_story
+                label = [3]
+                test_dataloader = GPT2SPModel.prepare_once_line(user_story, label)
+                prediction = GPT2SPModel.do_inference_once(trained_model, test_dataloader)
+                final_sp = Model.round_sp(prediction)
+                final_sp_value = final_sp[0]
+            else:
+                DEVICE = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+                path = "models/GPTSP_Medium_model"
+                trained_model = GPT2SPMediumModel.load_trained_model(path)
+                trained_model.to(DEVICE)
+                trained_model.eval()
+                user_story = user_story
+                label = [3]
+                test_dataloader = GPT2SPMediumModel.prepare_once_line(user_story, label)
+                print(test_dataloader)
+                prediction = GPT2SPMediumModel.do_inference_once(trained_model, test_dataloader)
+                final_sp = Model.round_sp(prediction)
+                final_sp_value = [final_sp]
+            return final_sp_value
 
     @staticmethod
     def call_to_explain(user_story):
@@ -86,7 +105,23 @@ class ModelCall:
         explainer = Explainer.explainer()
         exp = Explainer.explain_instance(explainer, user_story, explainer_model, 5)
         list_of_words = Explainer.get_all_the_list_of_words(exp)
-        html = exp.show_in_notebook(text=True)
-        return Response(str(html), mimetype='text/plain')
+        # html = exp.show_in_notebook()
 
+        display_obj = HTML(exp.as_html())
 
+        # print(type(exp.show_in_notebook(text=True)))
+        # buf = io.BytesIO(html)
+        # plt.savefig(buf, format='png')
+        # buf.seek(0)
+
+        html_string = display_obj.data
+        # Render the HTML template with the notebook results
+        return html_string
+        # html_content = exp.as_html()*****
+        # create a Flask response with the HTML content
+        # response = make_response(html_content) ****
+
+        # response.headers['Content-Type'] = 'text/html' **
+        # **** response.headers['Content-Disposition'] = 'attachment; filename=explanation.html'
+        # return response ****
+        # return html

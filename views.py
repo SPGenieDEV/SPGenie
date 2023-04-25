@@ -1,5 +1,5 @@
 import pandas as pd
-from flask import Blueprint, render_template, request, Flask, jsonify, Response
+from flask import Blueprint, render_template, request, Flask, jsonify, Response, render_template_string, url_for
 from Classes.Model import Model
 from Classes.ModelCall import ModelCall
 from flask_cors import CORS
@@ -55,7 +55,7 @@ def form():
 
 
 @views.route('/userStory', methods=['POST'])
-def get_users():
+def get_user_point():
     user_story = request.get_json()
     choice = request.args.get("choice")
     print(user_story['user_story'])
@@ -70,6 +70,9 @@ def get_users():
         print(sp_value[0])
         return jsonify({'story_point': str(sp_value[0])})
     elif choice == '3':
+        sp_value = final_sp[0]
+        return jsonify({'story_point': str(sp_value[0])})
+    elif choice == '4':
         sp_value = final_sp[0]
         return jsonify({'story_point': str(sp_value[0])})
 
@@ -92,5 +95,20 @@ def get_explainer_test():
     print(user_story)
     # predicted_value = data['predictedValue']
     response_data = ModelCall.call_to_explain_test(user_story)
-    # response = Response(response_data, mimetype='image/png')
+    # html_page = render_template('text.html', content=response_data)
+    # print(html_page)
+    # response = Response(response_data, mimetype='html')
+
     return response_data
+
+
+@views.route('/explainTestWeb', methods=['POST','GET'])
+def get_explainer_test_web():
+    user_story = request.form.get("message")
+    # print(data)
+    # user_story = "I want to send a response as a html and show under the current page using flask"
+    # print(user_story)
+    response_data = ModelCall.call_to_explain_test(user_story)
+    # html = render_template(''response_data)
+
+    return render_template("text.html", content=response_data)
