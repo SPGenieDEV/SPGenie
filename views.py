@@ -55,7 +55,7 @@ def form():
 
 
 @views.route('/userStory', methods=['POST'])
-def get_users():
+def get_user_point():
     user_story = request.get_json()
     choice = request.args.get("choice")
     print(user_story['user_story'])
@@ -70,6 +70,9 @@ def get_users():
         print(sp_value[0])
         return jsonify({'story_point': str(sp_value[0])})
     elif choice == '3':
+        sp_value = final_sp[0]
+        return jsonify({'story_point': str(sp_value[0])})
+    elif choice == '4':
         sp_value = final_sp[0]
         return jsonify({'story_point': str(sp_value[0])})
 

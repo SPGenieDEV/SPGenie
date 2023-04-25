@@ -1,14 +1,15 @@
 import pandas as pd
 import tokenization as tokenization
 import torch
-from transformers import GPT2Tokenizer
+from transformers import GPT2Tokenizer, GPT2Config
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 from tokenizers import Tokenizer
 from Classes.GPT2SP import GPT2ForSequenceClassification as GPT2SPSeq
+from Classes.GPT2SPModel import GPT2SPModel
 from Classes.custom_transformers_interpret import SequenceClassificationExplainer
 
 
-class GPT2SPModel:
+class GPT2SPMediumModel:
     DEVICE = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     SEQUENCE_LEN = 20
     PAD_TOKEN_ID = None
@@ -31,13 +32,19 @@ class GPT2SPModel:
 
     @staticmethod
     def load_trained_model(path):
-        # path = "models/GPT2SP_model"
-        return GPT2SPSeq.from_pretrained(path)
+        config = GPT2Config.from_pretrained('gpt2-medium', num_labels=1, pad_token_id=50256)
+        # device = torch.device('cpu')
+        path = "models/GPTSP_Medium_model"
+        # path = "MickyMike/" + model_id[1:] + "-GPT2SP-" + project_name
+        return GPT2SPSeq.from_pretrained(path, config=config)
+
+        # return GPT2SPSeq.from_pretrained(path, ignore_mismatched_sizes=True)
 
     @staticmethod
     def tokenization(text_list):
         sequence_len = 20
-        tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
+        config = GPT2Config.from_pretrained('gpt2-medium', num_labels=1, pad_token_id=50256)
+        tokenizer = GPT2Tokenizer.from_pretrained('gpt2-medium', config=config)
         tokenizer.pad_token = '[PAD]'
         return tokenizer.batch_encode_plus(text_list, truncation=True, max_length=sequence_len, padding='max_length')
 
@@ -46,7 +53,7 @@ class GPT2SPModel:
         d = {'text': user_story, 'label': label, 'issuekey': "1234"}
         df = pd.DataFrame(data=d)
         test_text = df['text']
-        tokens_test = GPT2SPModel.tokenization(test_text)
+        tokens_test = GPT2SPMediumModel.tokenization(test_text)
         test_seq = torch.tensor(tokens_test['input_ids'])
         test_y = torch.tensor(label).type(torch.LongTensor)
         tensor_dataset = TensorDataset(test_seq, test_y)
@@ -74,7 +81,8 @@ class GPT2SPModel:
         # print(b_input_ids)
         total_distance = 0
         index = 0
-        print(predictions)
+        print('Here predictions')
+        print(predictions[0][0])
         # for i in range(len(predictions)):
         #     for j in range(len(predictions[i])):
         #         # for each correctly predicted issue
@@ -96,4 +104,4 @@ class GPT2SPModel:
         # total_data_point = len(predictions) * len(predictions[0])
         # MAE = total_distance / total_data_point
         # print('MAE: ', MAE)
-        return predictions
+        return predictions[0][0]
