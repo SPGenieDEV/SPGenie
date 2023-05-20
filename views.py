@@ -1,4 +1,5 @@
 import pandas as pd
+from IPython.core.display import HTML
 from flask import Blueprint, render_template, request, Flask, jsonify, Response, render_template_string, url_for
 from Classes.Model import Model
 from Classes.ModelCall import ModelCall
@@ -102,7 +103,16 @@ def get_explainer_test():
     return response_data
 
 
-@views.route('/explainTestWeb', methods=['POST','GET'])
+@views.route('/explainCustom', methods=['POST'])
+def get_explainer_custom():
+    data = request.get_json()
+    user_story = data['userStory']
+    response_data = ModelCall.call_to_explain_custom(user_story)
+    html_string = response_data.data
+    return Response(html_string, content_type='text/html')
+
+
+@views.route('/explainTestWeb', methods=['POST', 'GET'])
 def get_explainer_test_web():
     user_story = request.form.get("message")
     # print(data)

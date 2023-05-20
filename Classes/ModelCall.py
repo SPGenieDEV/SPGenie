@@ -4,6 +4,7 @@ from io import BytesIO
 import torch
 from flask import Response, make_response
 from matplotlib import pyplot as plt
+from transformers import GPT2Config, GPT2Tokenizer
 
 from Classes.Explainer import Explainer
 from Classes.GPT2SPModel import GPT2SPModel
@@ -11,6 +12,8 @@ from Classes.GPT2SPMediumModel import GPT2SPMediumModel
 from Classes.Model import Model
 from Classes.RnnModel import RnnModel
 from IPython.core.display import HTML
+
+from Classes.custom_transformers_interpret import SequenceClassificationExplainer
 
 
 class ModelCall:
@@ -97,6 +100,20 @@ class ModelCall:
         # Create a response object with the image data
         response = Response(fig_bytes.getvalue(), mimetype='image/png')
         return response
+
+    @staticmethod
+    def call_to_explain_custom(user_story):
+        DEVICE = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+        path = "models/GPTSP_Medium_model"
+        trained_model = GPT2SPMediumModel.load_trained_model(path)
+        trained_model.to(DEVICE)
+        trained_model.eval()
+        config = GPT2Config.from_pretrained('gpt2-medium', num_labels=1, pad_token_id=50256)
+        tokenizer = GPT2Tokenizer.from_pretrained('gpt2-medium', config=config)
+        tokenizer.pad_token = '[PAD]'
+        cls_explainer = SequenceClassificationExplainer(trained_model, tokenizer)
+        attrs = cls_explainer(user_story, ground_truth="N/A")
+        return cls_explainer.visualize()
 
     @staticmethod
     def call_to_explain_test(user_story):

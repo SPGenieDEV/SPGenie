@@ -64,7 +64,7 @@ class GPT2SPMediumModel:
     def do_inference_once(trained_model, test_dataloader):
         global TEXT, KEY
         XAI = True
-        tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
+        tokenizer = GPT2Tokenizer.from_pretrained('gpt2-medium')
         tokenizer.pad_token = '[PAD]'
         TOK = tokenizer
         cls_explainer = SequenceClassificationExplainer(trained_model, TOK)
