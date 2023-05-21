@@ -14,7 +14,7 @@ from Classes.RnnModel import RnnModel
 from IPython.core.display import HTML
 
 from Classes.custom_transformers_interpret import SequenceClassificationExplainer
-
+from Classes.GPT2SPLargeModel import GPT2SPLargeModel
 
 class ModelCall:
 
@@ -54,7 +54,7 @@ class ModelCall:
             print(Model.max_occurrence(final_sp))
             return final_sp
 
-        elif choice == 3 or choice == 4:
+        elif choice == 3 or choice == 4 or choice == 5:
             if choice == 3:
                 path = "models/GPT2SP_model"
                 trained_model = GPT2SPModel.load_trained_model(path)
@@ -65,7 +65,7 @@ class ModelCall:
                 prediction = GPT2SPModel.do_inference_once(trained_model, test_dataloader)
                 final_sp = Model.round_sp(prediction)
                 final_sp_value = final_sp[0]
-            else:
+            elif choice == 4:
                 DEVICE = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
                 path = "models/GPTSP_Medium_model"
                 trained_model = GPT2SPMediumModel.load_trained_model(path)
@@ -76,6 +76,19 @@ class ModelCall:
                 test_dataloader = GPT2SPMediumModel.prepare_once_line(user_story, label)
                 print(test_dataloader)
                 prediction = GPT2SPMediumModel.do_inference_once(trained_model, test_dataloader)
+                final_sp = Model.round_sp(prediction)
+                final_sp_value = [final_sp]
+            elif choice == 5:
+                DEVICE = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+                path = "models/GPTSP_Large_model"
+                trained_model = GPT2SPLargeModel.load_trained_model(path)
+                trained_model.to(DEVICE)
+                trained_model.eval()
+                user_story = user_story
+                label = [3]
+                test_dataloader = GPT2SPLargeModel.prepare_once_line(user_story, label)
+                print(test_dataloader)
+                prediction = GPT2SPLargeModel.do_inference_once(trained_model, test_dataloader)
                 final_sp = Model.round_sp(prediction)
                 final_sp_value = [final_sp]
             return final_sp_value
