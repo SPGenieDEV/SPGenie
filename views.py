@@ -76,6 +76,9 @@ def get_user_point():
     elif choice == '4':
         sp_value = final_sp[0]
         return jsonify({'story_point': str(sp_value[0])})
+    elif choice == '5':
+        sp_value = final_sp[0]
+        return jsonify({'story_point': str(sp_value[0])})
 
 
 @views.route('/explain', methods=['POST'])
