@@ -35,11 +35,11 @@ class SequenceClassificationExplainer(BaseExplainer):
     """
 
     def __init__(
-        self,
-        model: PreTrainedModel,
-        tokenizer: PreTrainedTokenizer,
-        attribution_type: str = "lig",
-        custom_labels: Optional[List[str]] = None,
+            self,
+            model: PreTrainedModel,
+            tokenizer: PreTrainedTokenizer,
+            attribution_type: str = "lig",
+            custom_labels: Optional[List[str]] = None,
     ):
         """
         Args:
@@ -88,7 +88,7 @@ class SequenceClassificationExplainer(BaseExplainer):
 
     @staticmethod
     def _get_id2label_and_label2id_dict(
-        labels: List[str],
+            labels: List[str],
     ) -> Tuple[Dict[int, str], Dict[str, int]]:
         id2label: Dict[int, str] = dict()
         label2id: Dict[str, int] = dict()
@@ -147,16 +147,16 @@ class SequenceClassificationExplainer(BaseExplainer):
 
         """
         tokens = [token.replace("Ġ", "") for token in self.decode(self.input_ids)]
-        #attr_class = self.id2label[self.selected_index]
+        # attr_class = self.id2label[self.selected_index]
 
-        #if self._single_node_output:
+        # if self._single_node_output:
         #    attr_class = round(float(self.pred_probs))
 
         score_viz = self.attributions.visualize_attributions(  # type: ignore
-            self.predicted.flatten().item(), # original: pred_prob
+            self.predicted.flatten().item(),  # original: pred_prob
             torch.round(self.predicted).flatten().item(),
             self.ground_truth,
-            "N/A", # oribinal: attr_class
+            "N/A",  # oribinal: attr_class
             tokens,
         )
 
@@ -170,10 +170,10 @@ class SequenceClassificationExplainer(BaseExplainer):
         return html
 
     def _forward(  # type: ignore
-        self,
-        input_ids: torch.Tensor,
-        position_ids: torch.Tensor = None,
-        attention_mask: torch.Tensor = None,
+            self,
+            input_ids: torch.Tensor,
+            position_ids: torch.Tensor = None,
+            attention_mask: torch.Tensor = None,
     ):
         if self.accepts_position_ids:
             preds = self.model(
@@ -188,11 +188,12 @@ class SequenceClassificationExplainer(BaseExplainer):
             print("_forward prediction: ", preds)
 
         self.pred_probs = None
+        print("Predictions:", preds)
         self.predicted = preds
         return preds
 
     def _calculate_attributions(  # type: ignore
-        self, embeddings: Embedding, index: int = None, class_name: str = None
+            self, embeddings: Embedding, index: int = None, class_name: str = None
     ):
         (
             self.input_ids,
@@ -240,11 +241,11 @@ class SequenceClassificationExplainer(BaseExplainer):
         self.attributions = lig
 
     def _run(
-        self,
-        text: str,
-        index: int = None,
-        class_name: str = None,
-        embedding_type: int = None,
+            self,
+            text: str,
+            index: int = None,
+            class_name: str = None,
+            embedding_type: int = None,
     ) -> list:  # type: ignore
         if embedding_type is None:
             embeddings = self.word_embeddings
@@ -270,14 +271,14 @@ class SequenceClassificationExplainer(BaseExplainer):
         return self.word_attributions  # type: ignore
 
     def __call__(
-        self,
-        text: str,
-        ground_truth=0,
-        index: int = None,
-        class_name: str = None,
-        embedding_type: int = 0, 
-        internal_batch_size: int = None,
-        n_steps: int = None,
+            self,
+            text: str,
+            ground_truth=0,
+            index: int = None,
+            class_name: str = None,
+            embedding_type: int = 0,
+            internal_batch_size: int = None,
+            n_steps: int = None,
     ) -> list:
         """
         Calculates attribution for `text` using the model

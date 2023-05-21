@@ -14,6 +14,33 @@ from Classes.RnnModel import RnnModel
 from IPython.core.display import HTML
 
 from Classes.custom_transformers_interpret import SequenceClassificationExplainer
+from Classes.GPT2SPLargeModel import GPT2SPLargeModel
+
+
+def mapping(user_story_point):
+    print("Pre mapping:", user_story_point)
+    x_ceil = user_story_point[0][0]
+    temp = x_ceil
+    if 4 <= x_ceil <= 5:
+        temp = 5
+    elif 5 < x_ceil <= 6:
+        temp = 5
+    elif 6 < x_ceil <= 8:
+        temp = 8
+    elif 8 < x_ceil < 10:
+        temp = 8
+    elif 10 <= x_ceil <= 13:
+        temp = 13
+    elif 13 <= x_ceil <= 15:
+        temp = 15
+    elif 15 <= x_ceil <= 20:
+        temp = 20
+    elif 20 <= x_ceil <= 25:
+        temp = 20
+    elif 25 < x_ceil:
+        temp = 40
+
+    return temp
 
 
 class ModelCall:
@@ -54,7 +81,7 @@ class ModelCall:
             print(Model.max_occurrence(final_sp))
             return final_sp
 
-        elif choice == 3 or choice == 4:
+        elif choice == 3 or choice == 4 or choice == 5:
             if choice == 3:
                 path = "models/GPT2SP_model"
                 trained_model = GPT2SPModel.load_trained_model(path)
@@ -64,8 +91,10 @@ class ModelCall:
                 test_dataloader = GPT2SPModel.prepare_once_line(user_story, label)
                 prediction = GPT2SPModel.do_inference_once(trained_model, test_dataloader)
                 final_sp = Model.round_sp(prediction)
-                final_sp_value = final_sp[0]
-            else:
+                temp = mapping(user_story_point=final_sp)
+                print("Mapping status:", final_sp[0], [[temp]])
+                final_sp_value =  final_sp[0]
+            elif choice == 4:
                 DEVICE = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
                 path = "models/GPTSP_Medium_model"
                 trained_model = GPT2SPMediumModel.load_trained_model(path)
@@ -77,6 +106,23 @@ class ModelCall:
                 print(test_dataloader)
                 prediction = GPT2SPMediumModel.do_inference_once(trained_model, test_dataloader)
                 final_sp = Model.round_sp(prediction)
+                temp = mapping(user_story_point=[final_sp])
+                print("Mapping status:", [final_sp], [[temp]])
+                final_sp_value = [final_sp]
+            elif choice == 5:
+                DEVICE = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+                path = "models/GPTSP_Large_model"
+                trained_model = GPT2SPLargeModel.load_trained_model(path)
+                trained_model.to(DEVICE)
+                trained_model.eval()
+                user_story = user_story
+                label = [3]
+                test_dataloader = GPT2SPLargeModel.prepare_once_line(user_story, label)
+                print(test_dataloader)
+                prediction = GPT2SPLargeModel.do_inference_once(trained_model, test_dataloader)
+                final_sp = Model.round_sp(prediction)
+                temp = mapping(user_story_point=[final_sp])
+                print("Mapping status:", [final_sp], [[temp]])
                 final_sp_value = [final_sp]
             return final_sp_value
 
