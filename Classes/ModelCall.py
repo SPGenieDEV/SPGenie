@@ -93,7 +93,7 @@ class ModelCall:
                 final_sp = Model.round_sp(prediction)
                 temp = mapping(user_story_point=final_sp)
                 print("Mapping status:", final_sp[0], [[temp]])
-                final_sp_value = [[temp]]
+                final_sp_value =  final_sp[0]
             elif choice == 4:
                 DEVICE = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
                 path = "models/GPTSP_Medium_model"
@@ -108,7 +108,7 @@ class ModelCall:
                 final_sp = Model.round_sp(prediction)
                 temp = mapping(user_story_point=[final_sp])
                 print("Mapping status:", [final_sp], [[temp]])
-                final_sp_value = [[temp]]
+                final_sp_value = [final_sp]
             elif choice == 5:
                 DEVICE = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
                 path = "models/GPTSP_Large_model"
@@ -123,7 +123,7 @@ class ModelCall:
                 final_sp = Model.round_sp(prediction)
                 temp = mapping(user_story_point=[final_sp])
                 print("Mapping status:", [final_sp], [[temp]])
-                final_sp_value = [[temp]]
+                final_sp_value = [final_sp]
             return final_sp_value
 
     @staticmethod
